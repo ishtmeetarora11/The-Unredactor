@@ -32,6 +32,12 @@ Run the following command on terminal
 pipenv run python unredactor.py
 ```
 
+## Video Overview
+
+https://github.com/user-attachments/assets/34f1a6fa-f256-44a7-aa5d-9e6652887182
+
+
+
 ## unredactor.py overview ( Pipeline )
 
 ### Overview

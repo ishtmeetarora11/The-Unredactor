@@ -59,6 +59,7 @@ The task is to predict names that have been redacted in text (represented by seq
         return re.sub(r'█+', '<redacted>', str(context))
 
     Regex Pattern r'█+': Matches one or more consecutive █ characters.
+    
     Replacement: These matched sequences are replaced with <redacted>.
 
 

@@ -13,6 +13,7 @@ spacy = "*"
 datasets = "*"
 accelerate = "*"
 nltk = "*"
+pytest = "*"
 
 [dev-packages]
 

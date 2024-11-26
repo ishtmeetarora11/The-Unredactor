@@ -70,7 +70,9 @@ The task is to predict names that have been redacted in text (represented by seq
 
     Steps:
         Reads the data using pandas.read_csv with custom parsing parameters.
+
         Applies preprocess_context to replace redacted blocks in the context column.
+
         Drops rows where any of processed_context, name, or split is missing.
 
     Result: A cleaned and preprocessed DataFrame.
@@ -106,22 +108,22 @@ The task is to predict names that have been redacted in text (represented by seq
         Shuffle: Shuffles the balanced dataset to avoid ordering bias.
 
 
-### identify_concept_sentences(text, concepts)
+## Label Encoding
 
-```
-def identify_concept_sentences(text, concepts):
+### encode_labels(balanced_train_data, val_data)
 
-    Identifies sentences containing specified concepts (e.g., "confidential") for redaction.
+    Purpose:
+        Converts names (categorical labels) into numerical labels using LabelEncoder.
 
-    Args:
-        text (str): The text to analyze.
+        Ensures that the validation dataset only contains names present in the training dataset.
 
-        concepts (list of str): List of keywords or phrases to identify.
+    Steps:
+        Fits a LabelEncoder on the training names to encode them as integers.
+
+        Filters the validation data to include only known names.
         
-    Returns:
-        List of character index ranges for sentences containing any specified concepts.
+        Transforms the validation names using the same encoder.
 
-```
 
 ### redact_entities_hf(text, targets, stats)
 

@@ -62,7 +62,6 @@ The task is to predict names that have been redacted in text (represented by seq
     Replacement: These matched sequences are replaced with <redacted>.
 
 
-
 ### initialize_spacy_nlp()
 
 ```

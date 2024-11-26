@@ -86,20 +86,26 @@ The task is to predict names that have been redacted in text (represented by seq
 
     Validation Data: Used to evaluate the model (split == 'validation').
     
-    Implementation: Uses pandas filtering to create separate DataFrames for training and validation.
+    Implementation: Uses pandas filtering to create separate DataFrames for training 
+    and validation.
+
 
 ## Balancing the Training Data
 
 ### balance_training_data(train_data)
 
-    Purpose: Ensures the training data is balanced across all classes (names). Balancing avoids bias in the model towards more frequent names.
+    Purpose: Ensures the training data is balanced across all classes (names). Balancing avoids 
+    bias in the model towards more frequent names.
 
     Steps:
         Count Occurrences: Counts the number of samples for each name.
-        Undersampling: For each name, keeps only min_count samples (the smallest class size) by random sampling.
+
+        Undersampling: For each name, keeps only min_count samples (the smallest class size) by 
+        random sampling.
+
         Shuffle: Shuffles the balanced dataset to avoid ordering bias.
-        
-            
+
+
 ### identify_concept_sentences(text, concepts)
 
 ```

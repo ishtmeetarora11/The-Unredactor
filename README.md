@@ -50,10 +50,16 @@ The task is to predict names that have been redacted in text (represented by seq
 
 -> Generating predictions for a test dataset.
 
-### Command-Line Arguments ( Parameters )
+### Preprocessing ( preprocess_context(context) )
 
 ```
-    
+    Purpose: Replace sequences of █ characters (redacted text) in the input context with the placeholder <redacted>.
+
+    Implementation:
+        return re.sub(r'█+', '<redacted>', str(context))
+
+    Regex Pattern r'█+': Matches one or more consecutive █ characters.
+    Replacement: These matched sequences are replaced with <redacted>.
 
 ```
 

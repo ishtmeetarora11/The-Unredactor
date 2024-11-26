@@ -50,7 +50,9 @@ The task is to predict names that have been redacted in text (represented by seq
 
 -> Generating predictions for a test dataset.
 
-### Preprocessing ( preprocess_context(context) )
+### Preprocessing
+
+## preprocess_context(context) 
 
     Purpose: Replace sequences of █ characters (redacted text) in the input context with the 
     placeholder <redacted>.
@@ -62,9 +64,8 @@ The task is to predict names that have been redacted in text (represented by seq
     Replacement: These matched sequences are replaced with <redacted>.
 
 
-### initialize_spacy_nlp()
+## read_and_preprocess_data()
 
-```
 def initialize_spacy_nlp():
 
     Initializes a SpaCy NLP pipeline with custom entity recognition patterns for redacting names, dates, phone numbers, and addresses. Uses lazy loading to load the model only once.
@@ -72,7 +73,6 @@ def initialize_spacy_nlp():
     Returns:
         A SpaCy NLP pipeline configured with custom patterns.
 
-```
 
 ### initialize_hf_pipeline()
 

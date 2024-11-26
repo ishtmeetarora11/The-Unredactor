@@ -66,12 +66,14 @@ The task is to predict names that have been redacted in text (represented by seq
 
 ### read_and_preprocess_data()
 
-def initialize_spacy_nlp():
+    Purpose: Reads the unredactor.tsv dataset and preprocesses the text contexts.
 
-    Initializes a SpaCy NLP pipeline with custom entity recognition patterns for redacting names, dates, phone numbers, and addresses. Uses lazy loading to load the model only once.
-        
-    Returns:
-        A SpaCy NLP pipeline configured with custom patterns.
+    Steps:
+        Reads the data using pandas.read_csv with custom parsing parameters.
+        Applies preprocess_context to replace redacted blocks in the context column.
+        Drops rows where any of processed_context, name, or split is missing.
+
+    Result: A cleaned and preprocessed DataFrame.
 
 
 ### initialize_hf_pipeline()

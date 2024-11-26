@@ -115,235 +115,160 @@ The task is to predict names that have been redacted in text (represented by seq
     Purpose:
         Converts names (categorical labels) into numerical labels using LabelEncoder.
 
-        Ensures that the validation dataset only contains names present in the training dataset.
+        Ensures that the validation dataset only contains names present in the training 
+        dataset.
 
     Steps:
         Fits a LabelEncoder on the training names to encode them as integers.
 
         Filters the validation data to include only known names.
-        
+
         Transforms the validation names using the same encoder.
 
 
-### redact_entities_hf(text, targets, stats)
+## Feature Vectorization
 
-```
-def redact_entities_spacy(text, targets, stats):
+### vectorize_texts(train_texts, val_texts)
 
-    Uses Hugging Face’s NER pipeline to identify and redact specified entities.
+    Purpose: Converts the processed context text into numerical feature vectors using 
+    the TF-IDF (Term Frequency-Inverse Document Frequency) method.
 
-    Args:
-        text (str): Text to be redacted.
+    Key Parameters:
+        ngram_range=(1, 2): Captures single words (unigrams) and consecutive 
+        word pairs (bigrams).
 
-        targets (list of str): List of entities to redact (e.g., ['names', 'addresses']).
+        max_features=50000: Limits the number of features to 50,000.
 
-        stats (dict): Dictionary tracking redaction counts.
-        
-    Returns:
-        List of character index ranges to redact.
+        min_df=1: A term must appear in at least one document to be included.
 
-```
+        max_df=1.0: A term can appear in all documents.
 
-### redact_entities_spacy(text, targets, stats)
 
-```
-def redact_entities_spacy(text, targets, stats):
+## Model Training
 
-    Uses the SpaCy pipeline to identify and redact specific entities in the text based on target categories (e.g., names, dates).
+### train_classifier(train_vectors, train_labels)
 
-    Args:
-        text (str): Text to be redacted.
+    Purpose: Trains a Logistic Regression model on the training data.
 
-        targets (list of str): List of entities to redact (e.g., ['names', 'dates']).
+    Model Parameters:
+        penalty='l2': L2 regularization prevents overfitting by penalizing 
+        large weights.
 
-        stats (dict): Dictionary tracking redaction counts.
-        
-    Returns:
-        List of character index ranges to redact.
+        solver='saga': Optimizer suitable for large datasets and sparse data.
 
-```
+        max_iter=1000: Allows up to 1000 iterations to converge.
 
-### redact_email_headers(text, targets, stats)
 
-```
-def redact_email_headers(text, targets, stats):
+## Model Evaluation
 
-    Redacts names found in email headers (such as 'From', 'To', 'Cc') within the text.
+### evaluate_model(clf, val_vectors, val_labels, label_encoder)
 
-    Args:
-        text (str): Text to be redacted.
+    Purpose: Evaluates the model's performance on the validation set.
 
-        targets (list of str): List of entity types to redact (e.g., ['names']).
+    Steps:
+        Top-K Predictions: For each validation sample, retrieves the top-5 most probable 
+        predictions.
 
-        stats (dict): Dictionary tracking redaction counts.
-        
-    Returns:
-        List of character index ranges to redact.
+        Binarized Labels: Converts both true labels and predictions into binary vectors 
+        for multi-class evaluation.
 
-```
+        Metrics Computation: Uses precision_recall_fscore_support with average='micro' 
+        to compute precision, recall, and F1-score.
 
-### redact_entities_regex(text, targets, stats)
 
-```
-def redact_entities_regex(text, targets, stats):
+## Test Data Handling
 
-    Uses regular expressions to identify and redact specified entities, such as phone numbers, dates, and names, based on pattern matching.
+### read_and_preprocess_test_data()
 
-    Args:
-        text (str): Text to be redacted.
+    Purpose: Reads the test dataset from test.tsv and preprocesses the context 
+    column using preprocess_context.
 
-        targets (list of str): List of entities to redact (e.g., ['phones', 'dates']).
+    Result: Returns a DataFrame with processed test data.
 
-        stats (dict): Dictionary tracking redaction counts.
-        
-    Returns:
-        List of character index ranges to redact.
 
-```
+### create_submission_file(clf, vectorizer, test_data, label_encoder)
 
-### write_stats(stats, destination)
+    Purpose: Uses the trained model to predict names for the test dataset.
+    Saves the predictions to a submission.tsv file.
 
-```
-def write_stats(stats, destination):
+    Steps:
+        Transforms the test data using the same TF-IDF vectorizer.
 
-    Outputs the redaction statistics to the specified destination (stderr, stdout, or a file path).
+        Predicts the most likely name for each test context.
 
-    Args:
-        stats (dict): Dictionary containing counts of redacted items by category.
+        Writes the predictions (test IDs and names) to a TSV file.
 
-        destination (str): Output destination for statistics.
 
-    This function accumulates counts for all redacted items across multiple files. If a redaction span is identified multiple times by different methods (e.g., SpaCy, Hugging Face, and regex)
+## Orchestration
 
-```
+### unredactor()
 
-### process_file(file_path, args, stats)
+    Purpose: Orchestrates the entire pipeline by calling all helper functions in 
+    sequence.
 
-```
-def process_file(file_path, args, stats):
+    Steps:
+        Reads and preprocesses the training data.
 
-    Processes a single text file, applying redaction based on specified arguments, and saves the redacted content.
+        Splits the data into training and validation sets.
 
-    Args:
-        file_path (str): Path of the input file.
+        Balances the training data.
 
-        args (Namespace): Parsed command-line arguments with options for redaction.
+        Encodes the labels.
 
-        stats (dict): Dictionary to accumulate redaction statistics.
+        Vectorizes the text data.
 
-```
+        Trains a Logistic Regression classifier.
+
+        Evaluates the model on the validation set.
+
+        Reads and preprocesses the test data.
+
+        Generates predictions for the test set and saves them in a submission.tsv file.
+
+
+## Examples of Usage
+
+-> Predict redacted names from the text context in declassified intelligence documents.
+
+-> Predict names from redacted sections to aid investigations.
+
+-> Predict patient names from context when approved by institutional policies.
 
 ## Bugs and Assumptions
 
 ### Assumptions
 
--> The redact_entities_regex function may not always recognize names accurately, especially in cases of uncommon names or names with special characters. It relies on capitalized words, which could lead to false positives (e.g., capitalized words in sentences being treated as names).
+-> Works on unseen test data by leveraging context and uses sparse matrices and efficient algorithms for large datasets.
 
--> The hardcoded patterns for dates, phone numbers, and addresses may not cover all possible formats encountered in real-world data. For instance, international phone number formats are not fully supported.
+-> Logistic Regression works efficiently with sparse data and large feature spaces. It uses linear functions that are computationally less expensive compared to tree-based methods like Random Forest.
 
--> The write_stats function directly increments redaction counts without checking for duplicates. This might cause inaccurate counts, especially if an entity is identified multiple times by different models.
+-> Logistic Regression models linear decision boundaries, which are often sufficient for text classification tasks. It fits a weighted sum of features to predict class probabilities.
+
+-> The L2 regularization used in Logistic Regression is sufficient to prevent overfitting.
+
+-> TF-IDF provides sufficient feature representation for the classification task.
 
 
 ## Test Cases
 
-### test_address.py
+### test_preprocess_context_basic.py
 
-test_redact_address_spacy: Tests the redact_entities_spacy function by providing a sample address. Asserts that no address is detected to check if the function works correctly with a non-matching target.
+test_basic_redaction: Tests the function's ability to replace a single redacted block (█) 
+with <redacted> in a typical sentence containing multiple redactions.
 
-test_redact_address_regex: Tests the redact_entities_regex function by providing an address in text format. Asserts that one address is detected using regex.
+test_multiple_redactions: Validates the function's ability to handle sentences with multiple 
+redacted blocks of varying lengths.
 
+test_no_redactions: Ensures the function does not alter input text when no redacted blocks are present.
 
-### test_concepts.py
+### test_read_and_preprocess_data_basic.py
 
-test_identify_concept_sentences: Tests the identify_concept_sentences function by providing text with specific concepts. Asserts that sentences containing specified concepts are correctly identified.
+test_read_and_preprocess_data: Verifies that the function Reads a properly formatted TSV file, Applies the preprocess_context function to the context column, Returns a DataFrame with all required columns and preprocessed content.
 
+### test_split_data_only_validation.py
 
-### test_dates.py
+test_split_data_only_validation: Verifies that the function correctly handles a dataset containing only validation samples.
 
-test_redact_dates_spacy: Tests the redact_entities_spacy function to detect dates in the text. Asserts that one date is detected using SpaCy.
-
-test_redact_dates_regex: Tests the redact_entities_regex function to detect multiple dates in different formats. Asserts that two dates are correctly identified using regex.
-
-
-### test_identify_concepts.py
-
-test_no_concepts: Verifies that no concepts are detected if the text does not contain specified keywords.
-
-test_single_concept: Checks if a single concept is identified and redacted correctly in the text.
-
-test_multiple_concepts: Tests multiple concept detection within the text and ensures the correct spans are returned.
-
-test_concepts_case_insensitive: Verifies that the function is case-insensitive by detecting concepts written in different cases.
-
-test_concepts_partial_match: Ensures that only exact matches are detected, ignoring partial matches within words.
-
-
-### test_main.py
-
-test_main_success: Mocks file processing to ensure main function correctly processes multiple files with specified options and calls the appropriate functions.
-
-test_main_no_files_matched: Verifies that an error message is displayed when no files match the input pattern.
-
-test_main_with_single_file: Tests the main function with a single file and verifies that processing functions are called correctly.
-
-
-### test_merge_spans.py
-
-test_no_overlaps: Tests that non-overlapping spans are returned as-is without modification.
-
-test_with_overlaps: Ensures overlapping spans are merged into a single span.
-
-test_adjacent_spans: Verifies that adjacent spans are merged into one span.
-
-test_nested_spans: Checks if nested spans are merged into a single span correctly.
-
-test_empty_spans: Confirms that an empty list of spans returns an empty result without errors.
-
-
-### test_names.py
-
-test_redact_person_names_spacy: Tests if SpaCy detects and redacts a person’s name in the text.
-
-test_redact_person_names_hf: Verifies that Hugging Face NER detects and redacts a person’s name in the text.
-
-test_redact_person_names_regex: Tests if regex successfully identifies and redacts multiple person names in the text.
-
-
-### test_phones.py
-
-test_redact_phone_numbers_spacy: Checks if SpaCy correctly detects and redacts a phone number in the text.
-
-test_redact_phone_numbers_regex: Verifies that regex identifies multiple phone numbers in various formats and redacts them.
-
-
-### test_process_file.py
-
-test_process_file_success: Tests process_file with mocked functions to verify that redactions are applied correctly, the output file is written, and statistics are updated accurately.
-
-test_process_file_read_error: Verifies that an error message is output to stderr when there is an issue reading the input file.
-
-
-### test_redact_email_headers.py
-
-test_redact_names_in_headers: Tests redact_email_headers to confirm that names in email headers are correctly detected and redacted, and the statistics are updated accurately.
-
-
-### test_redact_entities_regex.py
-
-test_no_matches: Checks that no redactions are applied if the text does not contain any of the specified entities.
-
-test_overlapping_matches: Ensures that overlapping entities (e.g., name and phone number) are handled correctly by the regex redaction method, and statistics are updated accurately.
-
-
-### test_write_stats.py
-
-test_write_stats_to_file: Tests writing redaction statistics to a file by verifying the file content.
-
-test_write_stats_to_stdout: Checks if redaction statistics are correctly output to stdout.
-
-test_write_stats_to_stderr: Ensures redaction statistics are written to stderr when specified.
-
-test_write_stats_to_file_failure: Verifies that an error message is output to stderr if there is a failure in writing statistics to a file.
 
 
 

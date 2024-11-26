@@ -50,9 +50,9 @@ The task is to predict names that have been redacted in text (represented by seq
 
 -> Generating predictions for a test dataset.
 
-### Preprocessing
+## Preprocessing
 
-## preprocess_context(context) 
+### preprocess_context(context) 
 
     Purpose: Replace sequences of █ characters (redacted text) in the input context with the 
     placeholder <redacted>.
@@ -64,7 +64,7 @@ The task is to predict names that have been redacted in text (represented by seq
     Replacement: These matched sequences are replaced with <redacted>.
 
 
-## read_and_preprocess_data()
+### read_and_preprocess_data()
 
 def initialize_spacy_nlp():
 

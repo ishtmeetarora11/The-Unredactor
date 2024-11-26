@@ -76,17 +76,18 @@ The task is to predict names that have been redacted in text (represented by seq
     Result: A cleaned and preprocessed DataFrame.
 
 
-### initialize_hf_pipeline()
+## Data Splitting
 
-```
-def initialize_hf_pipeline():
+### split_data(data) 
 
-    Initializes a Hugging Face NER pipeline using the dslim/bert-base-NER model. This pipeline is used for entity detection in the redaction process.
-        
-    Returns:
-        A Hugging Face pipeline object for Named Entity Recognition (NER).
+    Purpose: Splits the input data into two subsets:
 
-```
+    Training Data: Used to train the model (split == 'training').
+
+    Validation Data: Used to evaluate the model (split == 'validation').
+    
+    Implementation: Uses pandas filtering to create separate DataFrames for training and validation.
+
 ### merge_overlapping_spans(spans)
 
 ```

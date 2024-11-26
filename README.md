@@ -52,8 +52,8 @@ The task is to predict names that have been redacted in text (represented by seq
 
 ### Preprocessing ( preprocess_context(context) )
 
-```
-    Purpose: Replace sequences of █ characters (redacted text) in the input context with the placeholder <redacted>.
+    Purpose: Replace sequences of █ characters (redacted text) in the input context with the 
+    placeholder <redacted>.
 
     Implementation:
         return re.sub(r'█+', '<redacted>', str(context))
@@ -61,7 +61,6 @@ The task is to predict names that have been redacted in text (represented by seq
     Regex Pattern r'█+': Matches one or more consecutive █ characters.
     Replacement: These matched sequences are replaced with <redacted>.
 
-```
 
 
 ### initialize_spacy_nlp()

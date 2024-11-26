@@ -76,6 +76,18 @@ The task is to predict names that have been redacted in text (represented by seq
     Result: A cleaned and preprocessed DataFrame.
 
 
+## Balancing the Training Data
+
+### balance_training_data(train_data)
+
+    Purpose: Ensures the training data is balanced across all classes (names). Balancing avoids bias in the model towards more frequent names.
+
+    Steps:
+        Count Occurrences: Counts the number of samples for each name.
+        Undersampling: For each name, keeps only min_count samples (the smallest class size) by random sampling.
+        Shuffle: Shuffles the balanced dataset to avoid ordering bias.
+
+
 ## Data Splitting
 
 ### split_data(data) 
@@ -87,21 +99,6 @@ The task is to predict names that have been redacted in text (represented by seq
     Validation Data: Used to evaluate the model (split == 'validation').
     
     Implementation: Uses pandas filtering to create separate DataFrames for training and validation.
-
-### merge_overlapping_spans(spans)
-
-```
-def merge_overlapping_spans(spans):
-
-    Merges overlapping or adjacent character spans to ensure there are no redundant redactions in overlapping areas.
-        
-    Args:
-        spans (list of tuples): List of character index ranges to merge.
-
-    Returns:
-        A list of merged spans.
-        
-```
 ### identify_concept_sentences(text, concepts)
 
 ```

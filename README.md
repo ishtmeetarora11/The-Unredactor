@@ -1,7 +1,3 @@
-# cis6930fa24-project2
-
-Name: Ishtmeet Singh Arora
-
 ## Project Description
 The "Unredactor" project aims to develop a machine learning-based solution for identifying redacted names in textual data. In many cases, sensitive information, such as names, is redacted (e.g., replaced with blacked-out characters like "████") in textual documents. The goal of this project is to "unredact" these names by leveraging the contextual information surrounding the redaction. This is achieved through a multi-step pipeline involving text preprocessing, feature extraction, model training, and evaluation.
 
